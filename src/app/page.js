@@ -5,6 +5,8 @@ import ShimmerUI from "./components/navbar/shimmer";
 
 const Page = () => {
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
+  const [filteredRestaurant, setFilteredRestaurant] = useState([]);
+
   const [searchText, setSearchText] = useState("");
   const fetchData = async () => {
     const data = await fetch(
@@ -14,6 +16,9 @@ const Page = () => {
     const json = await data.json();
     console.log(json);
     setListOfRestaurants(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+    setFilteredRestaurant(
       json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
   };
@@ -45,31 +50,20 @@ const Page = () => {
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
         />
-
-        {/* <button
-          className="border bg-blue-400 p-1 rounded-xl ml-5"
-          onClick={() => {
-            console.log(searchText);
-            const filteredRestaurant = listOfRestaurants.filter((res) =>
-              res?.info?.name.includes(searchText)
-            );
-            setListOfRestaurants(filteredRestaurant);
-          }}
-        > */}
         <button
           className="border bg-blue-400 p-1 rounded-xl ml-5"
           onClick={() => {
             const filteredRestaurant = listOfRestaurants.filter((res) =>
               res?.info?.name.toLowerCase().includes(searchText.toLowerCase())
             );
-            setListOfRestaurants(filteredRestaurant)
+            setFilteredRestaurant(filteredRestaurant);
           }}
         >
           Search
         </button>
       </div>
       <div className="flex flex-wrap gap-10 m-10  ">
-        {listOfRestaurants.map((restaurant) => (
+        {filteredRestaurant.map((restaurant) => (
           <RestaurantCard resData={restaurant} key={restaurant.info.id} />
         ))}
       </div>
